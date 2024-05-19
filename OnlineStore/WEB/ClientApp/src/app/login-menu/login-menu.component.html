@@ -1,0 +1,18 @@
+<div *ngIf="isUserSignedIn">
+  <h4 class="text-white">Profile</h4>
+  <ul class="list-unstyled">
+    <li>
+      <a class="text-white">{{userName}}</a>
+    </li>
+    <li>
+      <form class="form-inline">
+        <button class="btn btn-secondary btn-sm mt-1" (click)="logout()">Logout</button>
+      </form>
+    </li>
+  </ul>
+</div>
+<div *ngIf="!isUserSignedIn">
+  <h4 class="text-white">Sign in</h4>
+  <a class="text-white me-1" routerLink="/login">Login</a>
+  <a class="text-white" routerLink="/register">Register</a>
+</div>

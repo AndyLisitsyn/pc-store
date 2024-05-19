@@ -1,0 +1,58 @@
+﻿@using WEB.ViewModels.CategoryViewModels
+@model CategoriesViewModel
+
+<section class="py-5 text-center container">
+    <div class="row py-lg-5">
+        <div class="col-lg-6 col-md-8 mx-auto">
+            <h1 class="fw-light">@Model.Category.Name</h1>
+            <p class="lead text-muted">@Model.Category.Description</p>
+        </div>
+    </div>
+</section>
+
+<div class="album py-5 bg-light">
+    <div class="container">
+         @if (User.IsInRole("admin"))
+         {
+            <a class="btn btn-primary btn-lg mb-5 mx-2" asp-action="Add" asp-route-parentCategoryId="@Model.Category.Id">Add New</a>
+            <a class="btn btn-secondary btn-lg mt-0 mb-5" asp-action="Restore">Restore</a>
+         }
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            @foreach (var item in Model.ChildCategories)
+            {
+                @if (User.IsInRole("admin"))
+                {
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <a class="text-decoration-none text-secondary" href="@Url.Action("Index", "Category", new { categoryId = item.Id })">
+                                <img class="img-fluid p-1" src="@Url.Action("GetCategoryImage", "Media", new { path = item.ImagePath })" alt="@item.Name" />
+                            </a>
+                            <div class="card-body">
+                                <h4 class="card-text fw-light" align="center">@Html.DisplayFor(modelItem => item.Name)</h4>
+                                <div class="mt-4">
+                                    <a class="btn btn-primary" asp-action="Edit" asp-route-categoryId="@item.Id">Edit</a>
+                                    <form class="d-inline-block" asp-action="Delete" asp-route-currentCategoryId="@Model.Category.Id" asp-route-categoryToDeleteId="@item.Id">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col">
+                        <a class="text-decoration-none text-secondary" href="@Url.Action("Index", "Category", new { categoryId = item.Id })">
+                            <div class="card shadow-sm">
+                                <img class="img-fluid p-1" src="@Url.Action("GetCategoryImage", "Media", new { path = item.ImagePath })" alt="@item.Name" />
+                                <div class="card-body">
+                                    <h4 class="card-text fw-light" align="center">@Html.DisplayFor(modelItem => item.Name)</h4>
+                                </div>
+                            </div>
+                        </a>
+                    </div>        
+                }
+            }
+        </div>
+    </div>
+</div>

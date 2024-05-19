@@ -1,0 +1,25 @@
+﻿@using Utils
+@using Services.Dto
+@model List<ReviewDto>
+
+<div>
+    @foreach (var item in Model)
+    {
+        <div class="mb-3">
+            <p class="h5 fs-sm">@Html.DisplayFor(modelItem => item.DesiredDisplayName)</p>
+            <div class="star-rating mt-2 mb-4">
+                @for (int i = 0; i < item.Rating; i++)
+                {
+                    <span class="fa fa-star checked" style="color: orange"></span>
+                }
+                @for (int i = 0; i < ReviewConstants.MaxRating - item.Rating; i++)
+                {
+                    <span class="fa fa-star"></span>
+                }
+            </div>
+        </div>
+        <p class="fs-md mb-2">@Html.DisplayFor(modelItem => item.Text)</p>
+        <span class="fs-ms text-muted mt-3">@Html.DisplayFor(modelItem => item.Date)</span>
+        <hr />
+    }
+</div>

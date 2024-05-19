@@ -1,0 +1,91 @@
+﻿@using WEB.ViewModels.ProductViewModules
+@model NewProductViewModel
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<div class="container">
+    <p class="h4 mt-4 mb-3">@ViewData["Title"]</p>
+    <p class="h5 mb-4">Create new product.</p>
+    <div style="max-width:450px">
+        <form asp-action="Add">
+            @Html.HiddenFor(model => model.CategoryId)
+            @Html.HiddenFor(model => model.PageNumber)
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select asp-for="Product.CategoryId" class="form-select" asp-items="@(new SelectList(Model.Categories,"Id","Name"))"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.Name" class="control-label"></label>
+                <input asp-for="Product.Name" class="form-control" />
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="Product.Description" class="control-label"></label>
+                <textarea asp-for="Product.Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="Product.Code" class="control-label"></label>
+                <input asp-for="Product.Code" class="form-control" />
+                <span asp-validation-for="Product.Code" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="Product.Amount" class="control-label"></label>
+                <input asp-for="Product.Amount" class="form-control" />
+                <span asp-validation-for="Product.Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="Product.Price" class="control-label"></label>
+                <input asp-for="Product.Price" class="form-control" />
+                <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+            @for (int i = 0; i < Model.Product.Images.Count; i++)
+            {
+                var id = "imagesInput" + i.ToString();
+                <div id=@id>
+                    <div class="form-group mt-2">
+                        <label class="control-label">Image @(i+1)</label>
+                        <input asp-for="Product.Images[i].Path" class="form-control" />
+                        <span asp-validation-for="Product.Images[i].Path" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label class="control-label">Thumbnail Image @(i+1)</label>
+                        <input asp-for="Product.Images[i].ThumbnailPath" class="form-control" />
+                        <span asp-validation-for="Product.Images[i].ThumbnailPath" class="text-danger"></span>
+                    </div>
+                </div>
+            }
+            <asp:button class="btn btn-secondary mt-3" id="addImageBtn" causesvalidation="false">Add Image</asp:button>
+            <div class="form-group mt-5 text-end">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+                <a class="btn btn-secondary mx-2" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@Model.PageNumber">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var imagesInputs = ["#imagesInput1", "#imagesInput2", "#imagesInput3", "#imagesInput4"];
+        var count = 0;
+        for (var i = 0; i < imagesInputs.length; i++) {
+            $(imagesInputs[i]).hide();
+        }
+        $("#addImageBtn").click(function (e) {
+            e.preventDefault();
+            $(imagesInputs[count]).show();
+            if (++count == imagesInputs.length) {
+                $("#addImageBtn").hide();
+            }
+            return false;
+        });
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

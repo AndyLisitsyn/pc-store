@@ -1,0 +1,185 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Model
+@using Utils
+@using WEB.ViewModels.ProductViewModules
+@model DetailsViewModel
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+<link rel="stylesheet" href="~/css/product-details-stylesheet.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+
+<div class="container">
+    <div class="row mt-2 mb-5">
+        <div class="col-md-6">
+            <div id="myCarousel" class="carousel slide" data-bs-interval="false">
+                <div class="carousel-inner">
+                    @for (int i = 0; i < Model.Product.Images.Count; i++)
+                    {
+                        if (i == 0)
+                        {
+                            <div class="active item carousel-item" data-slide-number="0">
+                                <img src="@Url.Action("GetProductImage", "Media", new { path = Model.Product.Images[0].Path })" class="img-fluid p-5">
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="item carousel-item" data-slide-number="@i">
+                                <img src="@Url.Action("GetProductImage", "Media", new { path = Model.Product.Images[i].Path})" class="img-fluid p-5">
+                            </div>
+                        }
+                    }
+                    <a class="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+                </div>
+                <ul class="carousel-indicators list-inline justify-content-center ms-5">
+                    @for (int i = 0; i < Model.Product.Images.Count && Model.Product.Images[i].ThumbnailPath != null; i++)
+                    {
+                        if (i == 0)
+                        {
+                            <li class="list-inline-item active">
+                                <a id="carousel-selector-0" class="selected" data-bs-slide-to="0" data-bs-target="#myCarousel">
+                                    <img src="@Url.Action("GetProductImage", "Media", new { path = Model.Product.Images[0].ThumbnailPath })" class="img-fluid">
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="list-inline-item">
+                                <a id="carousel-selector-@i" data-bs-slide-to="@i" data-bs-target="#myCarousel">
+                                    <img src="@Url.Action("GetProductImage", "Media", new { path = Model.Product.Images[i].ThumbnailPath })" class="img-fluid">
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6 mt-5 px-5">
+            <p class="h1"> @Html.DisplayFor(model => model.Product.Description)</p>
+            @if (Model.Reviews.Count > 0)
+            {
+                <div class="star-rating mt-3">
+                    @for (int i = 0; i < Model.AverageRating; i++)
+                    {
+                        <span class="fa fa-star checked"></span>
+                    }
+                    @for (int i = 0; i < ReviewConstants.MaxRating - Model.AverageRating; i++)
+                    {
+                        <span class="fa fa-star"></span>
+                    }
+                    <span class="text-secondary">(@Html.DisplayFor(model => model.ReviewsCount))</span>
+                </div>
+            }
+            <p class="fs-5 mt-3">
+                Code: @Html.DisplayFor(model => model.Product.Code)
+                <br />
+                Amount:
+                @if (Model.Product.Amount == 0)
+                {
+                    <span>out of stock</span>
+                }
+                else
+                {
+                    <span>@Html.DisplayFor(model => model.Product.Amount)</span>
+                }
+            </p>
+            <p class="h2 mt-4 mb-4">@Html.DisplayFor(model => model.Product.Price)$</p>
+            @if (Model.Product.Amount == 0)
+            {
+                <a href="#" class="btn btn-secondary btn-lg">Notify when in stock</a>
+            }
+            else
+            {
+                <a href="#" class="btn btn-primary btn-lg">Add To Cart</a>
+            }
+        </div>
+    </div>
+    <div class="row mt-4">
+        <p class="h4 mb-4">Reviews(@Html.DisplayFor(model => model.ReviewsCount))</p>
+        <hr />
+        <div class="col-md-6">
+            @if (Model.Reviews.Count > 0)
+            {
+                <div class="mt-5">
+                    <div class="mt-3">
+                        @foreach (var item in Model.Reviews)
+                        {
+                            <div class="mb-3">
+                                <p class="h5 fs-sm">@Html.DisplayFor(modelItem => item.DesiredDisplayName)</p>
+                                <div class="star-rating mt-2 mb-4">
+                                    @for (int i = 0; i < item.Rating; i++)
+                                    {
+                                        <span class="fa fa-star checked"></span>
+                                    }
+                                    @for (int i = 0; i < ReviewConstants.MaxRating - item.Rating; i++)
+                                    {
+                                        <span class="fa fa-star"></span>
+                                    }
+                                </div>
+                            </div>
+                            <p class="fs-md mb-2">@Html.DisplayFor(modelItem => item.Text)</p>
+                            <span class="fs-ms text-muted mt-3">@Html.DisplayFor(modelItem => item.Date)</span>
+                            <hr />
+                        }
+                        <div id="results"></div>
+                        <button id="load" class="btn btn-secondary">More Reviews</button>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (SignInManager.IsSignedIn(User) && !Model.IsReviewPostedByUser)
+        {
+            <div class="col-md-6">
+                <div class="mt-5 ms-5">
+                    <partial name="PostReviewFormPartial" model="Model.Review" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    var loadCount = 1;
+    var reviewsLoadingPageSize = @ReviewConstants.ReviewsLoadingPageSize;
+    $(document).ready(function () {
+        $("#load").click(function (e) {
+            e.preventDefault();
+            var url = "@Url.Action("LoadMoreReviews", "Product")?productId=" +@Model.Product.Id+"&pageNumber=" + (loadCount + 1);
+            $("<div>").load(url, function () {
+                $("#results").append($(this));
+                loadCount += 1;
+                if (loadCount * reviewsLoadingPageSize >= @Model.ReviewsCount) {
+                    $("#load").hide();
+                }
+            });
+        });
+
+        @*$("#submit").click(function (e) {
+            e.preventDefault();
+            var url = "@Url.Action("PostReview", "Product")";
+            var date = new Date();
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            var dateStr = day + "/" + month + "/" + year;
+            var model = { AuthorName: $("#name").val(), Date: dateStr, Text: $("#text").val(), Rating: $("#rating").val(), ProductId: @Model.Product.Id };
+            $.post(url, model, function (res) {
+                $("#postReviewForm").html(res);
+                $("#postReviewForm").fadeOut(2000);
+            });
+        });*@
+    });
+</script>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,33 @@
+﻿@using Services.Dto
+@model List<ProductDto>
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img class="img-fluid p-1" src="@Url.Action("GetProductImage", "Media", new { path = item.Images[0].Path })" alt="@item.Name" />
+                        <div class="card-body">
+                            <p class="card-text" style="min-height: 75px">@Html.DisplayFor(modelItem => item.Description)</p>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <p class="h3">@Html.DisplayFor(modelItem => item.Price)$</p>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="text-end">
+                                        <a class="btn btn-primary" asp-action="Edit" asp-route-productId="@item.Id">Edit</a>
+                                        <form class="d-inline-block" asp-action="Restore" asp-route-productId="@item.Id">
+                                            <button type="submit" class="btn btn-secondary">Restore</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

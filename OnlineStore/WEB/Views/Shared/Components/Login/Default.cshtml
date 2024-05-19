@@ -1,0 +1,23 @@
+﻿@using WEB.ViewModels.LoginViewModels
+@model AuthorizedViewModel
+
+@if (Model.IsSignedIn)
+{
+    <h4 class="text-white">Profile</h4>
+    <ul class="list-unstyled">
+        <li>
+            <a class="text-white" asp-area="" asp-controller="Account" asp-action="ShowProfile">@Html.DisplayFor(model => model.UserName)</a>
+        </li>
+        <li>
+            <form class="form-inline" id="loginForm" asp-area="" asp-controller="Account" asp-action="Logout">
+                <button type="submit" class="btn btn-secondary btn-sm mt-1">Logout</button>
+            </form>
+        </li>
+    </ul>
+}
+else
+{
+    <h4 class="text-white">Sign in</h4>
+    <a class="text-white me-1" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+    <a class="text-white" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+}

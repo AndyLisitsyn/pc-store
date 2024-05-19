@@ -1,0 +1,6 @@
+.footer {
+  position: absolute;
+  width: 100%;
+  white-space: nowrap;
+  bottom: 60px;
+}

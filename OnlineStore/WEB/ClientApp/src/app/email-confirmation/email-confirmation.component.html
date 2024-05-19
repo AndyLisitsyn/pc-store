@@ -1,0 +1,14 @@
+<app-nav-menu></app-nav-menu>
+<div class="container" *ngIf="isSuccess">
+  <h4 class="mb-3 mt-3">Email Confirmation</h4>
+  <p>
+    Thank you for confirming your email. Please click <a routerLink="/login">here</a> to log in.
+  </p>
+</div>
+<div class="container" *ngIf="!isSuccess">
+  <h4 class="mb-3 mt-3">Email Confirmation Error</h4>
+  <p>
+    Email confirmation failed. Please try <a routerLink="/register">again</a>.
+  </p>
+</div>
+<app-footer-absolute></app-footer-absolute>

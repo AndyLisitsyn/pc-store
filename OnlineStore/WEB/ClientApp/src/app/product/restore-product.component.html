@@ -1,0 +1,29 @@
+<app-nav-menu></app-nav-menu>
+<div class="album py-5 bg-light">
+  <div class="container">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+      <div class="col" *ngFor="let p of products">
+        <div class="card shadow-sm">
+          <img class="img-fluid p-1" src="{{p.images[0].path}}" alt="{{p.name}}" />
+          <div class="card-body">
+            <p class="card-text" style="min-height: 75px">{{p.description}}</p>
+            <div class="row">
+              <div class="col-md-5">
+                <p class="h3">{{p.price}}$</p>
+              </div>
+              <div class="col-md-7">
+                <div class="text-end">
+                  <a class="btn btn-primary mx-1" [routerLink]="['/editProduct', p.id]">Edit</a>
+                  <form class="d-inline-block">
+                    <button type="submit" class="btn btn-secondary" (click)="restoreProduct(p.id)">Restore</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer-absolute></app-footer-absolute>

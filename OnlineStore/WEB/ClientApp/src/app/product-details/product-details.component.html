@@ -1,0 +1,135 @@
+<app-nav-menu></app-nav-menu>
+<div class="container">
+  <div class="row mt-2 mb-5">
+    <div class="col-md-6">
+      <div id="myCarousel" class="carousel slide" data-bs-interval="false">
+        <div class="carousel-inner">
+          <ng-container *ngFor="let i of images; let index = index">
+            <div class="item carousel-item" data-slide-number="0" *ngIf="index != 0 else firstImage">
+              <img src="{{i.path}}" class="img-fluid p-5">
+            </div>
+            <ng-template #firstImage>
+              <div class="active item carousel-item" data-slide-number="@i">
+                <img src="{{i.path}}" class="img-fluid p-5">
+              </div>
+            </ng-template>
+          </ng-container>
+          <a class="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </a>
+        </div>
+        <ul class="carousel-indicators list-inline justify-content-center ms-5">
+          <ng-container *ngFor="let i of images; let index = index">
+            <li class="list-inline-item" *ngIf="index != 0 else firstImage">
+              <a id="carousel-selector-{{index}}" [attr.data-bs-slide-to]="index" data-bs-target="#myCarousel" *ngIf="i.thumbnailPath != null">
+                <img src="{{i.thumbnailPath}}" class="img-fluid">
+              </a>
+            </li>
+            <ng-template #firstImage>
+              <li class="list-inline-item active" *ngIf="i.thumbnailPath != null">
+                <a id="carousel-selector-0" class="selected" data-bs-slide-to="0" data-bs-target="#myCarousel">
+                  <img src="{{i.thumbnailPath}}" class="img-fluid">
+                </a>
+              </li>
+            </ng-template>
+          </ng-container>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 mt-5 px-5">
+      <p class="h1"> {{product?.description}}</p>
+      <div class="star-rating mt-3" *ngIf="reviewsCount > 0">
+        <span *ngFor="let item of createRange(averageRating)" class="fa fa-star checked me-1"></span>
+        <span *ngFor="let item of createRange(5 - averageRating)" class="fa fa-star me-1"></span>
+        <span class="text-secondary">({{reviewsCount}})</span>
+      </div>
+      <p class="fs-5 mt-3">
+        Code: {{product?.code}}
+        <br />
+        Amount:
+        <span *ngIf="product?.amount == 0 else nonZero">out of stock</span>
+        <ng-template #nonZero>
+          <span> {{product?.amount}}</span>
+        </ng-template>
+      </p>
+      <p class="h2 mt-4 mb-4">{{product?.price}}$</p>
+      <a *ngIf="product?.amount == 0 else inStock" href="#" class="btn btn-secondary btn-lg">Notify when in stock</a>
+      <ng-template #inStock>
+        <a href="#" class="btn btn-primary btn-lg">Add To Cart</a>
+      </ng-template>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <p class="h4 mb-4">Reviews({{reviewsCount}})</p>
+    <hr />
+    <div class="col-md-6">
+      <div class="mt-5" *ngIf="reviewsCount > 0">
+        <div class="mt-3">
+          <ng-container *ngFor="let review of reviews">
+            <div class="mb-3">
+              <p class="h5 fs-sm">{{review?.desiredDisplayName}}</p>
+              <div class="star-rating mt-2 mb-4">
+                <span class="fa fa-star checked me-1" *ngFor="let item of createRange(review.rating)"></span>
+                <span class="fa fa-star me-1" *ngFor="let item of createRange(5 - review.rating)"></span>
+              </div>
+            </div>
+            <p class="fs-md mb-2">{{review?.text}}</p>
+            <span class="fs-ms text-muted mt-3">{{formatDate(review?.date)}}</span>
+            <hr />
+          </ng-container>
+          <div id="results"></div>
+          <button id="load" class="btn btn-secondary" (click)="loadMoreReviews()">More Reviews</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6" *ngIf="!isReviewSuccessfullyPosted && !isReviewPostedByUser && isUserSignedIn">
+      <div class="mt-5 ms-5">
+        <p class="h4 text-center mb-5">Post Your Review</p>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label class="form-label">Name</label>
+              <input class="form-control" name="name" [(ngModel)]="review.desiredDisplayName" #name="ngModel" required />
+              <span [hidden]="name.valid || name.untouched" class="text-danger">Name is required.</span>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label class="form-label">Rating</label>
+              <select class="form-select" [(ngModel)]="review.rating">
+                <option value="5">★★★★★ (5/5)</option>
+                <option value="4">★★★★☆ (4/5)</option>
+                <option value="3">★★★☆☆ (3/5)</option>
+                <option value="2">★★☆☆☆ (2/5)</option>
+                <option value="1">★☆☆☆☆ (1/5)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-group mt-2">
+          <label class="form-label">Comment</label>
+          <textarea class="form-control" rows="8" [(ngModel)]="review.text"></textarea>
+        </div>
+        <div class="form-group mt-5">
+          <button [disabled]="name.invalid" class="btn btn-secondary" (click)="postReview(review)">Post Review</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6" *ngIf="isReviewSuccessfullyPosted">
+      <div class="mt-5 ms-5">
+        <div class="alert alert-success" role="alert">
+          <h4 class="alert-heading">Well done!</h4>
+          <p>Thank you for posting your product review for {{product.description}}.</p>
+          <hr>
+          <p class="mb-0">Your review has been posted.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer-relative></app-footer-relative>

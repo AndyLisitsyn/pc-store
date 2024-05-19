@@ -1,0 +1,77 @@
+<app-nav-menu></app-nav-menu>
+<div class="album py-5 bg-light">
+  <div class="container">
+    <div *ngIf="isAdmin">
+      <a class="btn btn-primary btn-lg mt-0 mb-5 mx-2" [routerLink]="['/addProduct', categoryId]">Add New</a>
+      <a class="btn btn-secondary btn-lg mt-0 mb-5" [routerLink]="['/restoreProducts']">Restore</a>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 row-e" *ngIf="!isAdmin">
+      <div class="col" *ngFor="let p of products">
+        <a class="text-decoration-none text-dark" [routerLink]="['/product-details', p.id]">
+          <div class="card shadow-sm">
+            <img class="img-fluid align-self-center p-5" src="{{p.images[0].path}}" alt="{{p.name}}" />
+            <div class="card-body">
+              <p class="card-text" style="min-height: 75px">{{p.description}}</p>
+              <p class="h3">{{p.price}}$</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 row-e" *ngIf="isAdmin">
+      <div class="col" *ngFor="let p of products">
+        <div class="card shadow-sm">
+          <a class="text-decoration-none text-dark" [routerLink]="['/product-details', p.id]">
+            <img class="img-fluid align-self-center p-5" src="{{p.images[0].path}}" alt="{{p.name}}" />
+          </a>
+            <div class="card-body">
+              <p class="card-text" style="min-height: 75px">{{p.description}}</p>
+              <div class="row">
+                <div class="col-md-5">
+                  <p class="h3">{{p.price}}$</p>
+                </div>
+                <div class="col-md-7">
+                  <div class="text-end">
+                    <a class="btn btn-primary" [routerLink]="['/editProduct', p.id]">Edit</a>
+                    <button type="submit" class="btn btn-secondary mx-1" (click)="hideProduct(p.id)">Hide</button>
+                    <button type="submit" class="btn btn-danger" (click)="deleteProduct(p.id)">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-5">
+      <nav aria-label="Products page navigation">
+        <ul class="pagination pagination-lg">
+          <li class="page-item disabled" *ngIf="pageNumber == 1; else notFirstPage"><a class="page-link">Previous</a></li>
+          <ng-template #notFirstPage>
+            <li class="notFirstPage">
+              <a [routerLink]="['/products', categoryId, pageNumber-1]" class="page-link">Previous</a>
+            </li>
+          </ng-template>
+          <ng-container *ngFor="let p of pagesArray; let index = index">
+            <li class="page-item" *ngIf="index + 1 != pageNumber else currentPage">
+              <a class="page-link" [routerLink]="['/products', categoryId, index + 1]">{{index + 1}}</a>
+            </li>
+            <ng-template #currentPage>
+              <li class="page-item active">
+                <a class="page-link">{{index + 1}}</a>
+              </li>
+            </ng-template>
+          </ng-container>
+          <li *ngIf="pageNumber == pagesCount || pagesCount == 0; else notLastPage" class="page-item disabled"><a class="page-link">Next</a></li>
+          <ng-template #notLastPage>
+            <li class="page-item">
+              <a class="page-link" [routerLink]="['/products', categoryId, pageNumber+1]">Next</a>
+            </li>
+          </ng-template>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+<app-footer-relative></app-footer-relative>
+
+

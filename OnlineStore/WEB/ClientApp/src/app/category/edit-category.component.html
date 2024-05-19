@@ -1,0 +1,32 @@
+<app-nav-menu></app-nav-menu>
+<div class="container">
+  <p class="h4 mt-4 mb-3">Edit Category</p>
+  <p class="h5 mb-4">Make changes to the category.</p>
+  <div style="max-width:450px">
+    <span class="text-danger" *ngIf="error!=null">&#9679; {{error}}</span>
+    <div class="form-group">
+      <label class="form-label">Parent Category</label>
+      <select class="form-select" [(ngModel)]="category.parentCategoryId">
+        <option value="0"></option>
+        <option *ngFor="let c of categories" [ngValue]="c.id">{{c.name}}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label mt-2">Name</label>
+      <input class="form-control" name="name" [(ngModel)]="category.name" #name="ngModel" required />
+    </div>
+    <div class="form-group">
+      <label class="form-label mt-2">Description</label>
+      <textarea class="form-control" rows="4" [(ngModel)]="category.description"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label mt-2">Image path</label>
+      <input class="form-control" [(ngModel)]="category.imagePath" />
+    </div>
+    <div class="form-group mt-5 text-end">
+      <button class="btn btn-primary" [disabled]="name.invalid" (click)="submit(category)">Submit</button>
+      <button class="btn btn-secondary mx-2" (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+</div>
+<app-footer-absolute></app-footer-absolute>

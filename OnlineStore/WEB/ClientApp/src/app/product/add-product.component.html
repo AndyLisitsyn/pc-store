@@ -1,0 +1,54 @@
+<app-nav-menu></app-nav-menu>
+<div class="container">
+  <p class="h4 mt-4 mb-3">Add Product</p>
+  <p class="h5 mb-4">Create new product.</p>
+  <div style="max-width:450px">
+    <span class="text-danger" *ngIf="error!=null">&#9679; {{error}}</span>
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select class="form-select" [(ngModel)]="product.categoryId">
+        <option *ngFor="let c of categories" [ngValue]="c.id">{{c.name}}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Name</label>
+      <input class="form-control" name="name" [(ngModel)]="product.name" #name="ngModel" required />
+      <span [hidden]="name.valid || name.untouched" class="text-danger">
+        Name is required.
+      </span>
+    </div>
+    <div class="form-group mt-2">
+      <label class="control-label">Description</label>
+      <textarea class="form-control" rows="4" [(ngModel)]="product.description"></textarea>
+    </div>
+    <div class="form-group mt-2">
+      <label class="control-label">Code</label>
+      <input class="form-control" [(ngModel)]="product.code" />
+    </div>
+    <div class="form-group mt-2">
+      <label class="control-label">Amount</label>
+      <input class="form-control" [(ngModel)]="product.amount" />
+    </div>
+    <div class="form-group mt-2">
+      <label class="control-label">Price</label>
+      <input class="form-control" [(ngModel)]="product.price" />
+      <span asp-validation-for="Product.Price" class="text-danger"></span>
+    </div>
+    <div *ngFor="let i of product.images; let index = index" [attr.id]="'imagesInput' + index">
+      <div class="form-group mt-2">
+        <label class="control-label">Image {{index + 1}}</label>
+        <input class="form-control" [(ngModel)]="i.path" />
+      </div>
+      <div class="form-group mt-2">
+        <label class="control-label">Thumbnail Image {{index + 1}}</label>
+        <input class="form-control" [(ngModel)]="i.thumbnailPath" />
+      </div>
+    </div>
+    <button class="btn btn-secondary mt-3" id="addImageBtn" (click)="addImage()">Add Image</button>
+    <div class="form-group mt-5 text-end">
+      <button class="btn btn-primary" [disabled]="name.invalid" (click)="submit(product)">Submit</button>
+      <button class="btn btn-secondary mx-2" (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+</div>
+<app-footer-relative></app-footer-relative>

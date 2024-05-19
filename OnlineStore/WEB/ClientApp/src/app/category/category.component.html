@@ -1,0 +1,47 @@
+<app-nav-menu></app-nav-menu>
+<section class="py-5 text-center container">
+  <div class="row py-lg-5">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      <h1 class="fw-light">{{category?.name}}</h1>
+      <p class="lead text-muted">{{category?.description}}</p>
+    </div>
+  </div>
+</section>
+<div class="album py-5 bg-light">
+  <div class="container">
+    <div *ngIf="isAdmin">
+      <a class="btn btn-primary btn-lg mt-0 mb-5 mx-2" [routerLink]="['/addCategory', id]">Add New</a>
+      <a class="btn btn-secondary btn-lg mt-0 mb-5" [routerLink]="['/restoreCategories']">Restore</a>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" *ngIf="!isAdmin">
+      <div class="col" *ngFor="let c of childCategories">
+        <a class="text-decoration-none text-secondary" [routerLink]="['/category', c.id]">
+          <div class="card shadow-sm">
+            <img class="img-fluid p-1" src="{{c?.imagePath}}" alt="{{c?.name}}" />
+            <div class="card-body">
+              <h4 class="card-text fw-light" align="center">{{c?.name}}</h4>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" *ngIf="isAdmin">
+      <div class="col" *ngFor="let c of childCategories">
+        <div class="card shadow-sm">
+          <a class="text-decoration-none text-secondary" [routerLink]="['/category', c.id]">
+            <img class="img-fluid p-1" src="{{c?.imagePath}}" alt="{{c?.name}}" />
+          </a>
+          <div class="card-body">
+            <h4 class="card-text fw-light" align="center">{{c?.name}}</h4>
+            <div class="mt-4 text-center">
+              <a class="btn btn-primary" [routerLink]="['/editCategory', c.id]">Edit</a>
+              <button class="btn btn-secondary mx-1" (click)="hideCategory(c.id)">Hide</button>
+              <button class="btn btn-danger" (click)="deleteCategory(c.id)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer-relative></app-footer-relative>
